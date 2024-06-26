@@ -1,0 +1,41 @@
+//---Snake 2 Background Script---//
+//------Scripted by MegAmi-------//
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+
+sub ObjectDraw
+	DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+end sub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("AmericanFlag.gif")
+	SpriteFrame(-184, -125, 369, 250, 0, 0)
+	
+	Object[2].Type = TypeName[Background]
+	Object[2].Priority = PRIORITY_ACTIVE
+	Object[2].iXPos = Screen.CenterX
+	Object[2].iYPos = Screen.CenterY
+	Object[2].DrawOrder = 3
+	Object[2].Scale = 0x1B8
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	Object.Scale = 0x1B8
+	DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("AmericanFlag.gif")
+	SpriteFrame(-184, -125, 369, 250, 0, 0)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

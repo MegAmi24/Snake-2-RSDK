@@ -1,0 +1,120 @@
+//---Snake 2 HUD Script---//
+//---Scripted by MegAmi---//
+
+// Player Aliases
+#alias Player.Value0 : Player.Score
+#alias Player.Value1 : Player.Level
+#alias Player.Value2 : Player.XP
+#alias Player.Value3 : Player.XPNeeded
+#alias Player.Value4 : Player.Length
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+#alias 24 : SLOT_HUD
+
+// Function declarations
+#function HUD_SetXPosOnDigitCount
+
+
+// TempValue0 = Value to check
+// TempValue1 = Draw X position
+function HUD_SetXPosOnDigitCount
+	TempValue0 = TempValue0
+	while TempValue0 >= 10
+		TempValue0 /= 10
+		TempValue1 += 8
+	loop
+end function
+
+
+sub ObjectMain
+	// Initialize the player draw order
+	ArrayPos0 = Player.DrawOrder
+	Screen[ArrayPos0].DrawListSize = Player.Length
+	GetDrawListEntityRef(TempValue0, ArrayPos0, 0) // Get the player's draw order info
+	
+	// Sort the draw order of all of the snake's segments
+	ArrayPos1 = 0xFE
+	ArrayPos1 += Player.Length
+	TempValue1 = 0
+	while Object[ArrayPos1].Type == TypeName[Snake]
+		SetDrawListEntityRef(ArrayPos1, ArrayPos0, TempValue1)
+		ArrayPos1--
+		TempValue1++
+	loop
+	SetDrawListEntityRef(TempValue0, ArrayPos0, TempValue1) // Set the player's draw order info
+end sub
+
+
+sub ObjectDraw
+	// First, draw the Score/Level/XP text
+	DrawSpriteScreenXY(10, 2, 3)
+	
+	// Now, draw all the numbers
+	TempValue0 = Player.Score
+	TempValue1 = 50
+	CallFunction(HUD_SetXPosOnDigitCount)
+	DrawNumbers(0, TempValue1, 3, Player.Score, 10, 8, false)
+	
+	TempValue0 = Player.Level
+	TempValue1 = 50
+	CallFunction(HUD_SetXPosOnDigitCount)
+	DrawNumbers(0, TempValue1, 16, Player.Level, 10, 8, false)
+
+	TempValue0 = Player.XP
+	TempValue1 = 25
+	CallFunction(HUD_SetXPosOnDigitCount)
+	DrawNumbers(0, TempValue1, 29, Player.XP, 10, 8, false)
+	TempValue1 += 8
+	DrawSpriteScreenXY(11, TempValue1, 29)
+	TempValue0 = Player.XPNeeded
+	TempValue1 += 8
+	CallFunction(HUD_SetXPosOnDigitCount)
+	DrawNumbers(0, TempValue1, 29, Player.XPNeeded, 10, 8, false)
+end sub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Text.gif")
+	
+	ArrayPos0 = SLOT_HUD
+	Object[ArrayPos0].Type = TypeName[HUD]
+	Object[ArrayPos0].Priority = PRIORITY_ACTIVE
+	Object[ArrayPos0].DrawOrder = 7
+
+	// 0-9 - Number Digits
+	SpriteFrame(0, 0, 8, 10,  68, 105)
+	SpriteFrame(0, 0, 8, 10,  77, 105)
+	SpriteFrame(0, 0, 8, 10,  86, 105)
+	SpriteFrame(0, 0, 8, 10,  95, 105)
+	SpriteFrame(0, 0, 8, 10, 104, 105)
+	SpriteFrame(0, 0, 8, 10, 113, 105)
+	SpriteFrame(0, 0, 8, 10,  68, 116)
+	SpriteFrame(0, 0, 8, 10,  77, 116)
+	SpriteFrame(0, 0, 8, 10,  86, 116)
+	SpriteFrame(0, 0, 8, 10,  95, 116)
+	
+	// 10 - Score, Level, XP text
+	SpriteFrame(0, 0, 48, 36, 1, 88)
+	
+	// 11 - XP Slash character
+	SpriteFrame(0, 0, 8, 10, 104, 116)
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Text.gif")
+	SpriteFrame(-24, -18, 48, 36, 1, 88)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

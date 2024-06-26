@@ -1,0 +1,366 @@
+//---Snake 2 Snake Script---//
+//----Scripted by MegAmi----//
+
+// Player Aliases
+#alias Object.PropertyValue : Object.Segment
+#alias Player.Value0  : Player.Score
+#alias Player.Value1  : Player.Level
+#alias Player.Value2  : Player.XP
+#alias Player.Value3  : Player.XPNeeded
+#alias Player.Value4  : Player.Length
+#alias Player.Value5  : Player.Size
+#alias Player.Value6  : Player.XMomentum
+#alias Player.Value7  : Player.YMomentum
+#alias Player.Value8  : Player.PrevXPos1
+#alias Player.Value9  : Player.PrevYPos1
+#alias Player.Value10 : Player.PrevXPos2
+#alias Player.Value11 : Player.PrevYPos2
+#alias Player.Value12 : Player.PrevXPos3
+#alias Player.Value13 : Player.PrevYPos3
+#alias Player.Value14 : Player.PrevXPos4
+#alias Player.Value15 : Player.PrevYPos4
+
+// Segment Aliases
+#alias Object.Value0 : Object.PrevXPos1
+#alias Object.Value1 : Object.PrevYPos1
+#alias Object.Value2 : Object.PrevXPos2
+#alias Object.Value3 : Object.PrevYPos2
+#alias Object.Value4 : Object.PrevXPos3
+#alias Object.Value5 : Object.PrevYPos3
+#alias Object.Value6 : Object.PrevXPos4
+#alias Object.Value7 : Object.PrevYPos4
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+// Control Modes
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
+// Global SFX
+#alias 0 : SFX_G_SNAKE
+#alias 1 : SFX_G_LEVELUP
+
+#alias 0x20 : PLAYER_SCALE
+#alias 7 : IGNORE_SEGMENTS
+#alias 0x1000 : MOMENTUM
+
+
+// Function declarations
+#function Snake_UpdatePosition
+#function Snake_EatFood
+#function Snake_GameOver
+
+
+function Snake_UpdatePosition
+	// Modify current snake x velocity based on momentum
+	TempValue0 = Player.XMomentum
+	TempValue0 -= Player.XVelocity
+	TempValue0 *= MOMENTUM
+	TempValue0 >>= 16
+	Player.XVelocity += TempValue0
+	
+	// Modify current snake y velocity based on momentum
+	TempValue0 = Player.YMomentum
+	TempValue0 -= Player.YVelocity
+	TempValue0 *= MOMENTUM
+	TempValue0 >>= 16
+	Player.YVelocity += TempValue0
+	
+	// Store negative speed
+	TempValue0 = Player.Speed
+	FlipSign(TempValue0)
+	
+	// Ensure that x velocity does not exceed max speed
+	if Player.XVelocity < TempValue0
+		Player.XVelocity = TempValue0
+	else
+		if Player.XVelocity > Player.Speed
+			Player.XVelocity = Player.Speed
+		end if
+	end if
+	
+	// Ensure that y velocity does not exceed max speed
+	if Player.YVelocity < TempValue0
+		Player.YVelocity = TempValue0
+	else
+		if Player.YVelocity > Player.Speed
+			Player.YVelocity = Player.Speed
+		end if
+	end if
+	
+	// Update snake position
+	Player.XPos += Player.XVelocity
+	Player.YPos += Player.YVelocity
+end function
+
+
+function Snake_EatFood
+	Player.Score++
+	Player.XP++
+	if Player.XP >= Player.XPNeeded
+		Player.Level++
+		Player.Size += 0x10000
+		Player.Speed += 0x2000
+		Player.XP = 0
+		Player.XPNeeded *= 2
+		PlaySfx(SFX_G_LEVELUP, false)
+	end if
+	
+	ArrayPos0 = 0xFF
+	ArrayPos0 += Player.Length
+	ResetObjectEntity(ArrayPos0, TypeName[Snake], Player.Length, Player.PrevXPos4, Player.PrevYPos4)
+	if Object[ArrayPos0].Segment > 1
+		ArrayPos1 = ArrayPos0
+		ArrayPos1--
+		Object[ArrayPos0].XPos = Object[ArrayPos1].PrevXPos4
+		Object[ArrayPos0].YPos = Object[ArrayPos1].PrevYPos4
+	end if
+	Object[ArrayPos0].Scale = PLAYER_SCALE
+	Object[ArrayPos0].DrawOrder = -1
+	Object[ArrayPos0].Priority = PRIORITY_ACTIVE
+	Object[ArrayPos0].PrevXPos1 = Object[ArrayPos0].XPos
+	Object[ArrayPos0].PrevYPos1 = Object[ArrayPos0].YPos
+	Object[ArrayPos0].PrevXPos2 = Object[ArrayPos0].XPos
+	Object[ArrayPos0].PrevYPos2 = Object[ArrayPos0].YPos
+	Object[ArrayPos0].PrevXPos3 = Object[ArrayPos0].XPos
+	Object[ArrayPos0].PrevYPos3 = Object[ArrayPos0].YPos
+	Object[ArrayPos0].PrevXPos4 = Object[ArrayPos0].XPos
+	Object[ArrayPos0].PrevYPos4 = Object[ArrayPos0].YPos
+	Player.Length++
+	
+	Object[3].Type = TypeName[Microtransactions]
+	Object[3].Priority = PRIORITY_ACTIVE
+	Object[3].DrawOrder = 7
+	Player.ControlMode = CONTROLMODE_NONE
+end function
+
+
+function Snake_GameOver
+	PlaySfx(SFX_G_SNAKE, false)
+	
+	// Reset all objects
+	ArrayPos0 = 0
+	while ArrayPos0 < 4096
+		ResetObjectEntity(ArrayPos0, TypeName[Blank Object], 0, 0, 0)
+		ArrayPos0++
+	loop
+	
+	// Spawn the credits object
+	Object[4].Type = TypeName[Credits]
+	Object[4].Priority = PRIORITY_ACTIVE
+	Object[4].DrawOrder = 6
+	Player.ControlMode = CONTROLMODE_NONE
+end function
+
+
+sub ObjectMain
+	if Player.ControlMode == CONTROLMODE_NORMAL
+		if Object.Segment == 0
+			// Store previous positions
+			Player.PrevXPos4 = Player.PrevXPos3
+			Player.PrevYPos4 = Player.PrevYPos3
+			Player.PrevXPos3 = Player.PrevXPos2
+			Player.PrevYPos3 = Player.PrevYPos2
+			Player.PrevXPos2 = Player.PrevXPos1
+			Player.PrevYPos2 = Player.PrevYPos1
+			Player.PrevXPos1 = Player.XPos
+			Player.PrevYPos1 = Player.YPos
+			
+			// Process controls
+#platform: Mobile
+			CheckTouchRect(0, 96, Screen.CenterX, Screen.YSize)
+			if CheckResult > -1
+				ArrayPos0 = CheckResult
+				
+				// Initialize D-Pad x position
+				TempValue0 = TouchScreen[ArrayPos0].XPos
+				TempValue0 -= Options.DPadX
+				
+				// Initialize D-Pad y position
+				TempValue1 = TouchScreen[ArrayPos0].YPos
+				TempValue1 -= 192
+
+				// Check where the touch is, if it's there
+				ATan2(TempValue2, TempValue0, TempValue1)
+				TempValue2 += 32
+				TempValue2 &= 255
+				TempValue2 >>= 6
+				switch TempValue2
+				case 0
+					KeyDown[1].Right = true
+					break
+					
+				case 1
+					KeyDown[1].Down = true
+					break
+					
+				case 2
+					KeyDown[1].Left = true
+					break
+					
+				case 3
+					KeyDown[1].Up = true
+					break
+				end switch
+			end if
+#endplatform
+			
+			ProcessPlayerControl()
+			
+			// Get negative size
+			TempValue1 = Player.Size
+			FlipSign(TempValue1)
+			
+			// Check for inputs and set momentum
+			TempValue0 = Player.Up
+			CheckNotEqual(Player.YMomentum, Player.Size)
+			TempValue0 &= CheckResult
+			if TempValue0 == true
+				Player.XMomentum = 0
+				Player.YMomentum = TempValue1
+			else
+				TempValue0 = Player.Down
+				CheckNotEqual(Player.YMomentum, TempValue1)
+				TempValue0 &= CheckResult
+				if TempValue0 == true
+					Player.XMomentum = 0
+					Player.YMomentum = Player.Size
+				else
+					TempValue0 = Player.Left
+					CheckNotEqual(Player.XMomentum, Player.Size)
+					TempValue0 &= CheckResult
+					if TempValue0 == true
+						Player.XMomentum = TempValue1
+						Player.YMomentum = 0
+					else
+						TempValue0 = Player.Right
+						CheckNotEqual(Player.XMomentum, TempValue1)
+						TempValue0 &= CheckResult
+						if TempValue0 == true
+							Player.XMomentum = Player.Size
+							Player.YMomentum = 0
+						end if
+					end if
+				end if
+			end if
+			
+			CallFunction(Snake_UpdatePosition)
+			
+			// Check collision with x boundary
+			CheckLower(Player.iXPos, 0)
+			TempValue0 = CheckResult
+			TempValue1 = Screen.XSize
+			TempValue1--
+			CheckGreater(Player.iXPos, TempValue1)
+			TempValue0 |= CheckResult
+			CheckLower(Player.iYPos, 0)
+			TempValue0 |= CheckResult
+			TempValue1 = Screen.YSize
+			TempValue1--
+			CheckGreater(Player.iYPos, TempValue1)
+			TempValue0 |= CheckResult
+			if TempValue0 == true
+				CallFunction(Snake_GameOver)
+			end if
+		else
+			// Store previous positions
+			Object.PrevXPos4 = Object.PrevXPos3
+			Object.PrevYPos4 = Object.PrevYPos3
+			Object.PrevXPos3 = Object.PrevXPos2
+			Object.PrevYPos3 = Object.PrevYPos2
+			Object.PrevXPos2 = Object.PrevXPos1
+			Object.PrevYPos2 = Object.PrevYPos1
+			Object.PrevXPos1 = Object.XPos
+			Object.PrevYPos1 = Object.YPos
+			
+			// Set new position
+			if Object.Segment == 1
+				Object.XPos = Player.PrevXPos4
+				Object.YPos = Player.PrevYPos4
+			else
+				Object.XPos = Object[-1].PrevXPos4
+				Object.YPos = Object[-1].PrevYPos4
+			end if
+		end if
+	end if
+end sub
+
+
+sub ObjectPlayerInteraction
+	if Player.ControlMode == CONTROLMODE_NORMAL
+		if Object.Segment >= IGNORE_SEGMENTS
+			PlayerObjectCollision(C_TOUCH, -4, -4, 4, 4)
+			if CheckResult == true
+				CallFunction(Snake_GameOver)
+			end if
+		end if
+	end if
+end sub
+
+
+sub ObjectDraw
+	if Object.Segment == 0
+		DrawSpriteFX(0, FX_SCALE, Player.XPos, Player.YPos)
+	else
+		DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+	end if
+end sub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("GuyFieri.gif")
+	SpriteFrame(-70, -95, 145, 190, 0, 0)
+	
+	LoadPalette("GuyFieri.act", 0, 0, 0, 256) // Despite the name, this palette is used by all objects
+	
+	Rand(DLC_Activated, 5) // 20% chance of DLC being activated
+	
+	ResetObjectEntity(0, TypeName[Snake], 0, Object[ArrayPos0].XPos, Object[ArrayPos0].YPos)
+	BindPlayerToObject(0, 0)
+	LoadAnimation("GuyFieri.ani") // We aren't using any sprites from this file, we just need the hitbox
+	Player.iXPos = Screen.CenterX
+	Player.iYPos = Screen.CenterY
+	Player.PrevXPos1 = Player.XPos
+	Player.PrevXPos1 = Player.YPos
+	Player.PrevXPos2 = Player.XPos
+	Player.PrevXPos2 = Player.YPos
+	Player.PrevXPos3 = Player.XPos
+	Player.PrevXPos3 = Player.YPos
+	Player.PrevXPos4 = Player.XPos
+	Player.PrevXPos4 = Player.YPos
+	Player.Priority = PRIORITY_ACTIVE
+	Player.DrawOrder = 4
+	Player.Scale = PLAYER_SCALE
+	if DLC_Activated == true
+		Player.Speed = 0x30000
+	else
+		Player.Speed = 0x20000
+	end if
+	Player.Score = 0
+	Player.Level = 1
+	Player.XP = 0
+	Player.XPNeeded = 10
+	Player.Length = 1
+	Player.Size = 0x20000
+	Player.ControlMode = CONTROLMODE_NORMAL
+	Screen.CameraEnabled = false
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	Object.Scale = PLAYER_SCALE
+	DrawSpriteFX(0, FX_SCALE, Object.XPos, Object.YPos)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("GuyFieri.gif")
+	SpriteFrame(-70, -95, 145, 190, 0, 0)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

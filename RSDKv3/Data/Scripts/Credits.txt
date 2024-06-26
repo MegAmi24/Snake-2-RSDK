@@ -1,0 +1,105 @@
+//---Snake 2 Credits Script---//
+//-----Scripted by MegAmi-----//
+
+// Aliases
+#alias Object.Value0 : Object.Timer
+
+// Text Font Aliases
+#alias Object.Value1 : Object.TargetLine
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+// Control Modes
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
+// Text Info type
+#alias 0 : TEXTINFO_TEXTDATA
+#alias 1 : TEXTINFO_TEXTSIZE
+#alias 2 : TEXTINFO_ROWCOUNT
+
+// Engine State Aliases
+#alias 3 : ENGINE_EXITGAME
+
+
+sub ObjectMain
+	if Object.Timer == 0
+		SetupMenu(MENU_1, 0, 0, 0)
+		LoadTextFile(MENU_1, "Data/Game/Credits.txt", false)
+		GetTextInfo(TempValue1, MENU_1, TEXTINFO_ROWCOUNT, 0, 0)
+		
+		// Get the first empty unreserved slot
+		ArrayPos0 = 32
+		while Object[ArrayPos0].Type != TypeName[Blank Object]
+			ArrayPos0++
+		loop
+		
+		// Create all the text
+		// - TempValue0 is the current line being read from the file
+		// - TempValue2 is the X Position to spawn the text at (stays constant)
+		// - TempValue3 is the Y Position to spawn the text at
+		
+		TempValue0 = 0
+		TempValue2 = Screen.CenterX
+		TempValue2 <<= 16
+		TempValue2 += 0x70000
+		TempValue3 = 0x1E0000
+		
+		while TempValue0 < TempValue1
+			if TempValue0 == 1
+				TempValue2 -= 0x30000
+			end if
+			
+			// Get the length of the entry
+			GetTextInfo(TempValue4, MENU_1, TEXTINFO_TEXTSIZE, TempValue0, 0)
+			
+			if TempValue4 == 0
+				// This is a blank line, so don't put any text on the current line and instead create a new line 22 pixels tall
+				TempValue3 += 0x160000
+			else
+				ResetObjectEntity(ArrayPos0, TypeName[Text Font], 0, TempValue2, TempValue3)
+				Object[ArrayPos0].TargetLine = TempValue0
+				Object[ArrayPos0].DrawOrder = 6
+				ArrayPos0++
+				
+				// 14 pixels difference
+				TempValue3 += 0xE0000
+			end if
+			
+			TempValue0++
+		loop
+	end if
+	
+	// Proceed after 10 seconds
+	Object.Timer++
+	if Object.Timer == 600
+		Options.Soundtrack = 0 // Ensure we're using the "JP soundtrack" ("US" will just be mute)
+		LoadVideo("DLC_TOTK") // I have played over 3000 hours of Zelda games in my life.
+	end if
+	if Object.Timer > 600
+		Engine.State = ENGINE_EXITGAME
+	end if
+end sub
+
+
+sub ObjectDraw
+	DrawRect(0, 0, Screen.XSize, Screen.YSize, 0x00, 0x00, 0x00, 0x100)
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Text.gif")
+	SpriteFrame(-57, -38, 114, 76, 127, 1)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

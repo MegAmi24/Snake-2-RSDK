@@ -1,0 +1,60 @@
+//---Snake 2 Microtansactions Script---//
+//---------Scripted by MegAmi----------//
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+// Control Modes
+#alias 0 : CONTROLMODE_NORMAL
+
+
+sub ObjectMain
+	TempValue0 = KeyPress[0].ButtonB
+#platform: Mobile
+	// Check if touching the Microtansactions box
+	CheckTouchRect(45, 44, 178, 133)
+	CheckGreater(CheckResult, -1)
+	TempValue0 |= CheckResult
+#endplatform
+	if TempValue0 == true
+		// Return to gameplay
+		Player.ControlMode = CONTROLMODE_NORMAL
+		Object.Type = TypeName[Blank Object]
+		
+		// Play a random SFX for buying a microtransaction
+		Rand(TempValue0, 5)
+		TempValue0 += 2
+		PlaySfx(TempValue0, false)
+	end if
+end sub
+
+
+sub ObjectDraw
+	// Draw the box
+	DrawRect(45, 44, 133, 89, 0x80, 0x80, 0x80, 0x100)
+	DrawRect(49, 49, 125, 80, 0x00, 0x00, 0x00, 0x100)
+	DrawSpriteScreenXY(0, 51, 51)
+end sub
+
+
+sub ObjectStartup
+	LoadSpriteSheet("Text.gif")
+	SpriteFrame(0, 0, 114, 76, 127, 1)
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Text.gif")
+	SpriteFrame(-57, -38, 114, 76, 127, 1)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

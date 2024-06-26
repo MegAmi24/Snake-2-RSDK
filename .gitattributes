@@ -1,0 +1,5 @@
+# default behaviour
+* text=auto
+
+# v3 Script files must ALWAYS use crlf line endings
+RSDKv3/Data/Scripts/*.txt text eol=crlf

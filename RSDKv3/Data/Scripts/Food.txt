@@ -1,0 +1,137 @@
+//---Snake 2 Food Script---//
+//---Scripted by MegAmi----//
+
+// Aliases
+#alias Object.Value0 : Object.Timer
+#alias Object.Value1 : Object.XVelocity
+#alias Object.Value2 : Object.YVelocity
+#alias Object.Value3 : Object.ColorR
+#alias Object.Value4 : Object.ColorG
+#alias Object.Value5 : Object.ColorB
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+
+// Control Modes
+#alias -1 : CONTROLMODE_NONE
+#alias  0 : CONTROLMODE_NORMAL
+
+
+// Function declarations
+#function Food_NewPosition
+
+
+function Food_NewPosition
+	TempValue0 = Screen.XSize
+	TempValue0 -= 4
+	Rand(Object[1].iXPos, TempValue0)
+	Object[1].iXPos += 2
+	
+	TempValue0 = Screen.YSize
+	TempValue0 -= 4
+	Rand(Object[1].iYPos, TempValue0)
+	Object[1].iYPos += 2
+end function
+
+
+sub ObjectMain
+	if Player.ControlMode == CONTROLMODE_NORMAL
+		if DLC_Activated == true
+			// After some time passes, randomize the color of the food
+			// (In the original, this would update every frame, but at 60 FPS, we should avoid seizures)
+			Object.Timer++
+			if Object.Timer >= 5
+				Rand(Object.ColorR, 0x100)
+				Rand(Object.ColorG, 0x100)
+				Rand(Object.ColorB, 0x100)
+				Object.Timer = 0
+			end if
+		end if
+		
+		// Update food position
+		Object.XPos += Object.XVelocity
+		Object.YPos += Object.YVelocity
+		
+		// Check collision with x boundary
+		TempValue0 = Object.iXPos
+		TempValue0 -= 2
+		CheckLower(TempValue0, 0)
+		TempValue2 = CheckResult
+		TempValue0 = Object.iXPos
+		TempValue0 += 2
+		TempValue1 = Screen.XSize
+		TempValue1--
+		CheckGreater(TempValue0, TempValue1)
+		TempValue2 |= CheckResult
+		if TempValue2 == true
+			FlipSign(Object.XVelocity)
+		end if
+		
+		// Check collision with y boundary
+		TempValue0 = Object.iYPos
+		TempValue0 -= 2
+		CheckLower(TempValue0, 0)
+		TempValue2 = CheckResult
+		TempValue0 = Object.iYPos
+		TempValue0 += 2
+		TempValue1 = Screen.YSize
+		TempValue1--
+		CheckGreater(TempValue0, TempValue1)
+		TempValue2 |= CheckResult
+		if TempValue2 == true
+			FlipSign(Object.YVelocity)
+		end if
+	end if
+end sub
+
+
+sub ObjectPlayerInteraction
+	// Check collision with player
+	if Player.ControlMode == CONTROLMODE_NORMAL
+		PlayerObjectCollision(C_TOUCH, -2, -2, 2, 2)
+		if CheckResult == true
+			CallFunction(Snake_EatFood)
+			CallFunction(Food_NewPosition)
+		end if
+	end if
+end sub
+
+
+sub ObjectDraw
+	// Draw the rectangle
+	TempValue0 = Object.iXPos
+	TempValue0 -= 2
+	TempValue1 = Object.iYPos
+	TempValue1 -= 2
+	DrawRect(TempValue0, TempValue1, 4, 4, Object.ColorR, Object.ColorG, Object.ColorB, 0x100)
+end sub
+
+
+sub ObjectStartup
+	Object[1].Type = TypeName[Food]
+	Object[1].Priority = PRIORITY_ACTIVE
+	Object[1].DrawOrder = 5
+	Object[1].XVelocity = Player.Speed
+	Object[1].YVelocity = Player.Speed
+	Object[1].ColorR = 0x00
+	Object[1].ColorG = 0xFF
+	Object[1].ColorB = 0x00
+	CallFunction(Food_NewPosition)
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("AmericanFlag.gif")
+	SpriteFrame(-2, -2, 4, 4, 370, 0)
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

@@ -1,0 +1,126 @@
+//----------Snake 2 Touch Controls Script-----------//
+//---Scripted by Christian Whitehead 'The Taxman'---//
+//---Originally for Sonic CD, Modified by MegAmi----//
+
+// Aliases
+#alias Object.Value0 : Object.Fade
+#alias Object.Value1 : Object.DPadXPos
+
+// Ink Effects
+#alias 2 : INK_ALPHA
+
+// Control Mode
+#alias 0 : CONTROLMODE_NORMAL
+
+// Priority
+#alias 1 : PRIORITY_ACTIVE
+#alias 4 : PRIORITY_BOUNDS_DESTROY
+
+
+sub ObjectDraw
+	if Player.ControlMode == CONTROLMODE_NORMAL
+		if Stage.State != STAGE_PAUSED
+			if Object.Fade < 160
+				Object.Fade += 4
+			end if
+			
+			Object.Alpha = Object.Fade
+			DrawSpriteScreenFX(0, FX_INK, Object.DPadXPos, 160)
+
+			if Player.Left == true
+				Object.Alpha = 160
+				DrawSpriteScreenFX(7, FX_INK, Object.DPadXPos, 160)
+			else
+				Object.Alpha = Object.Fade
+				DrawSpriteScreenFX(3, FX_INK, Object.DPadXPos, 160)
+			end if
+
+			if Player.Down == true
+				Object.Alpha = 160
+				DrawSpriteScreenFX(6, FX_INK, Object.DPadXPos, 160)
+			else
+				Object.Alpha = Object.Fade
+				DrawSpriteScreenFX(2, FX_INK, Object.DPadXPos, 160)
+			end if
+
+			if Player.Right == true
+				Object.Alpha = 160
+				DrawSpriteScreenFX(8, FX_INK, Object.DPadXPos, 160)
+			else
+				Object.Alpha = Object.Fade
+				DrawSpriteScreenFX(4, FX_INK, Object.DPadXPos, 160)
+			end if
+
+			if Player.Up == true
+				Object.Alpha = 160
+				DrawSpriteScreenFX(5, FX_INK, Object.DPadXPos, 160)
+			else
+				Object.Alpha = Object.Fade
+				DrawSpriteScreenFX(1, FX_INK, Object.DPadXPos, 160)
+			end if
+		else
+			Object.Fade = 0
+		end if
+	else
+		if Object.Fade > 0
+			Object.Fade -= 4
+		end if
+
+		Object.Alpha = Object.Fade
+		if Object.Alpha > 0
+			DrawSpriteScreenFX(0, FX_INK, Object.DPadXPos, 160)
+			DrawSpriteScreenFX(1, FX_INK, Object.DPadXPos, 160)
+			DrawSpriteScreenFX(4, FX_INK, Object.DPadXPos, 160)
+			DrawSpriteScreenFX(2, FX_INK, Object.DPadXPos, 160)
+			DrawSpriteScreenFX(3, FX_INK, Object.DPadXPos, 160)
+		end if
+	end if
+end sub
+
+
+sub ObjectStartup
+#platform: Mobile
+	LoadSpriteSheet("DPad.gif")
+	
+	Object[4].Type = TypeName[Touch Controls]
+	Object[4].Priority = PRIORITY_ACTIVE
+	Object[4].DrawOrder = 7
+	Object[4].InkEffect = INK_ALPHA
+	Object[4].Fade = 0
+
+	if Engine.PlatformID == RETRO_WP7
+		Object[4].DPadXPos = 24
+		Options.DPadX = 56
+	else
+		Object[4].DPadXPos = 16
+		Options.DPadX = 48
+	end if
+
+	SpriteFrame(0, 0, 64, 64, 0, 64)		// #0  - D-Pad
+	SpriteFrame(26, 0, 12, 25, 26, 0)		// #1  - Up
+	SpriteFrame(26, 38, 12, 26, 26, 38)		// #2  - Down
+	SpriteFrame(0, 25, 26, 13, 0, 25)		// #3  - Left
+	SpriteFrame(38, 25, 26, 13, 38, 25)		// #4  - Right
+	SpriteFrame(26, 0, 12, 25, 116, 64)		// #5  - Pressed Up
+	SpriteFrame(26, 38, 12, 26, 116, 102)	// #6  - Pressed Down
+	SpriteFrame(0, 25, 26, 13, 89, 101)		// #7  - Pressed Left
+	SpriteFrame(38, 25, 26, 13, 89, 115)	// #8  - Presset Right
+#endplatform
+end sub
+
+
+// ========================
+// Editor Subs
+// ========================
+
+sub RSDKDraw
+	DrawSprite(0)
+end sub
+
+
+sub RSDKLoad
+	LoadSpriteSheet("Global/Items.gif")
+	SpriteFrame(-8, -8, 16, 16, 1, 1)			// #0  - Ring
+
+	SetVariableAlias(ALIAS_VAR_PROPVAL, "unused")
+end sub

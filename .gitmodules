@@ -1,0 +1,3 @@
+[submodule "RSDKv5/Source/GameAPI"]
+	path = RSDKv5/Source/GameAPI
+	url = https://github.com/Rubberduckycooly/GameAPI

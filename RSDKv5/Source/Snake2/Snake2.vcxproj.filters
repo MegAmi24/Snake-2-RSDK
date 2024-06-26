@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="GameAPI">
+      <UniqueIdentifier>{2b00ea04-a1d3-4639-b021-f84d63a0646a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects">
+      <UniqueIdentifier>{9ea60711-b902-46e4-a0fd-554f746f5f71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Game">
+      <UniqueIdentifier>{5bf6db29-93cf-4f56-a4d3-15c1eeb2cd95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Objects\Text">
+      <UniqueIdentifier>{635d552b-73b3-4628-858f-2dcb3f892465}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\GameAPI\CPP\GameAPI\Game.cpp">
+      <Filter>GameAPI</Filter>
+    </ClCompile>
+    <ClCompile Include="Snake2.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Game\Food.cpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Game\HUD.cpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Game\Microtransactions.cpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Game\Snake.cpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Text\TextSetup.cpp">
+      <Filter>Source Files\Objects\Text</Filter>
+    </ClCompile>
+    <ClCompile Include="Objects\Text\TextString.cpp">
+      <Filter>Source Files\Objects\Text</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\GameAPI\CPP\GameAPI\Game.hpp">
+      <Filter>GameAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameAPI\CPP\GameAPI\GameObjects.hpp">
+      <Filter>GameAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\GameAPI\CPP\GameAPI\GameVariables.hpp">
+      <Filter>GameAPI</Filter>
+    </ClInclude>
+    <ClInclude Include="Snake2.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Game\Food.hpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Game\HUD.hpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Game\Microtransactions.hpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Game\Snake.hpp">
+      <Filter>Source Files\Objects\Game</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Text\TextSetup.hpp">
+      <Filter>Source Files\Objects\Text</Filter>
+    </ClInclude>
+    <ClInclude Include="Objects\Text\TextString.hpp">
+      <Filter>Source Files\Objects\Text</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
