@@ -1,6 +1,8 @@
 # Snake 2 RSDKv5
 The RSDKv5 port of Snake 2. Created as an exercise for creating games with GameAPI.
 
+Can be loaded in the decomp as a mod with the included `mod.ini` file or via Data Folder Mode.
+
 # How to build
 This building guide assumes you are already familiar with [the building process for the RSDKv5(U) Decompilation](https://github.com/Rubberduckycooly/RSDKv5-Decompilation#how-to-build).
 
@@ -43,11 +45,11 @@ To add the symlink, write the appropriate command in `[RSDKv5-decompilation-root
 After adding the symlink, build the RSDKv5(U) decompilation in Android Studio.
 
 # Credits
-Original Game by DougDoug
-Using code generated with ChatGPT
-Retro Engine v5 port by MegAmi
-Some assets taken from Sonic CD (2011) by SEGA and Christian Whitehead
-Some assets taken from Sonic Mania by SEGA, Christian Whitehead, Headcannon, and PagodaWest Games
-Some code taken from the Sonic Mania decompilation and the ManiaTouchControls mod by Rubberduckycooly and st×tic
+* Original Game by DougDoug
+* Using code generated with ChatGPT
+* Retro Engine v5 port by MegAmi
+* Some assets taken from Sonic CD (2011) by SEGA and Christian Whitehead
+* Some assets taken from Sonic Mania by SEGA, Christian Whitehead, Headcannon, and PagodaWest Games
+* Some code taken from the Sonic Mania decompilation and the ManiaTouchControls mod by Rubberduckycooly and st×tic
 
 All rights go to their respective owners. This is very legal.
