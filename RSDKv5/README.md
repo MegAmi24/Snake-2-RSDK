@@ -4,7 +4,7 @@ The RSDKv5 port of Snake 2. Created as an exercise for creating games with GameA
 Can be loaded in the decomp as a mod with the included `mod.ini` file or via Data Folder Mode.
 
 # How to build
-This building guide assumes you are already familiar with [the building process for the RSDKv5(U) Decompilation](https://github.com/Rubberduckycooly/RSDKv5-Decompilation#how-to-build).
+This building guide assumes you are already familiar with [the building process for the RSDKv5(U) Decompilation](https://github.com/RSDKModding/RSDKv5-Decompilation#how-to-build).
 
 ## Get the source code
 Clone the repo **recursively**, using:
@@ -36,7 +36,7 @@ The following CMake arguments are available when compiling:
 Simply open the solution and build the project. Make sure that the architecture, engine revision, and mod loader version match with the target engine binary.
 
 ### Building for Android
-After [setting up the RSDKv5(U) decompilation for building](https://github.com/Rubberduckycooly/RSDKv5-Decompilation#how-to-build), you will need to add a symbolic link for the directory to the Snake 2 repository so that the game will be built as part of the APK.
+After [setting up the RSDKv5(U) decompilation for building](https://github.com/RSDKModding/RSDKv5-Decompilation#how-to-build), you will need to add a symbolic link for the directory to the Snake 2 repository so that the game will be built as part of the APK.
 To add the symlink, write the appropriate command in `[RSDKv5-decompilation-root]/android/app/jni`:
   * Windows: `mklink /d Game "[path-to-snake2]"`
   * Linux: `ln -s "[path-to-snake2]" Game`
